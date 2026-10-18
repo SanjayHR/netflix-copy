@@ -1,6 +1,23 @@
 import React from "react";
+import { signOut } from "firebase/auth";
+import { auth } from "../utils/firebase";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const Header = () => {
+  const navigate = useNavigate();
+  const user = useSelector((store) => store.user);
+  const handleSignOut = () => {
+    signOut(auth)
+      .then(() => {
+        navigate("/"); // Redirect to the login page after signing out
+        console.log("User signed out successfully.");
+      })
+      .catch((error) => {
+        navigate("/error"); // Redirect to the login page even if there's an error
+        console.error("Error signing out:", error);
+      });
+  };
   return (
     <div className="flex items-center justify-between p-4 bg-black/70">
       <img
@@ -8,6 +25,16 @@ const Header = () => {
         alt="Netflix Logo"
         className="w-32 h-12 bg-gradient-to-bl"
       />
+      {user && (
+        <div className="flex items-right justify-center p-4 bg-black/70">
+          <h1
+            className="text-md font-bold text-white cursor-pointer"
+            onClick={handleSignOut}
+          >
+            Sign Out
+          </h1>
+        </div>
+      )}
     </div>
   );
 };

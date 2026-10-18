@@ -1,8 +1,16 @@
 import { render, screen } from '@testing-library/react';
 import App from './App';
 
-test('renders learn react link', () => {
+jest.mock('./components/Body', () => {
+  const { useSelector } = require('react-redux');
+
+  return function MockBody() {
+    const user = useSelector((state) => state.user);
+    return <div>{user === null ? 'Redux provider is active' : 'Unexpected user state'}</div>;
+  };
+});
+
+test('provides the Redux store to the app body', () => {
   render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+  expect(screen.getByText('Redux provider is active')).toBeInTheDocument();
 });

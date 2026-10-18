@@ -5,61 +5,62 @@ import { auth } from "../utils/firebase";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  updateProfile,
 } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { addUser } from "../utils/userSlice";
 
 const Login = () => {
   const [isSignInForm, setIsSignInForm] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
+  const fullNameRef = useRef(null);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const toggleSignInForm = () => {
-    setIsSignInForm(!isSignInForm);
+    setIsSignInForm((currentValue) => !currentValue);
+    setErrorMessage(null);
   };
 
-  const handleSubmitButtonClick = () => {
-    const message = checkValidData(
-      emailRef.current.value,
-      passwordRef.current.value,
-    );
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    const email = emailRef.current.value.trim();
+    const password = passwordRef.current.value;
+    const fullName = fullNameRef.current?.value.trim() ?? "";
+    const message = checkValidData(email, password);
+
+    if (!message && !isSignInForm && !fullName) {
+      setErrorMessage("Full name is required.");
+      return;
+    }
+
     setErrorMessage(message);
     if (message) return;
-    if (!isSignInForm) {
-      // Handle sign-in logic here
-      createUserWithEmailAndPassword(
-        auth,
-        emailRef.current.value,
-        passwordRef.current.value,
-      )
-        .then((userCredential) => {
-          // Signed up
-          const user = userCredential.user;
-          console.log("User signed up:", user);
-        })
-        .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          setErrorMessage(errorCode + ": " + errorMessage);
-          console.error("Error signing up:", errorCode, errorMessage);
-        });
-    } else {
-      console.log("Signing in with:", emailRef.current.value);
-      // Handle sign-in logic here
-      signInWithEmailAndPassword(
-        auth,
-        emailRef.current.value,
-        passwordRef.current.value,
-      )
-        .then((userCredential) => {
-          const user = userCredential.user;
-          console.log("User signed in:", user);
-        })
-        .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          setErrorMessage(errorCode + ": " + errorMessage);
-          console.error("Error signing in:", errorCode, errorMessage);
-        });
+
+    try {
+      const userCredential = isSignInForm
+        ? await signInWithEmailAndPassword(auth, email, password)
+        : await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      if (!isSignInForm) {
+        await updateProfile(user, { displayName: fullName });
+      }
+
+      dispatch(
+        addUser({
+          uuid: user.uid,
+          email: user.email,
+          displayName: isSignInForm ? user.displayName : fullName,
+        }),
+      );
+      navigate("/browse");
+    } catch (error) {
+      setErrorMessage(`${error.code}: ${error.message}`);
     }
   };
 
@@ -74,7 +75,7 @@ const Login = () => {
       <div className="flex flex-col items-center justify-center h-screen text-white">
         <form
           className="flex flex-col bg-black/70 w-full max-w-md p-8 rounded-lg"
-          onSubmit={(e) => e.preventDefault()}
+          onSubmit={handleSubmit}
         >
           <h1 className="text-4xl font-bold mb-4">
             {isSignInForm ? "Sign In" : "Sign Up"}
@@ -84,6 +85,7 @@ const Login = () => {
               type="text"
               placeholder="Full Name"
               className="p-2 mb-4 rounded-lg text-black"
+              ref={fullNameRef}
             />
           )}
           <input
@@ -104,7 +106,6 @@ const Login = () => {
           <button
             type="submit"
             className="bg-red-600 p-2 rounded-lg hover:bg-red-700"
-            onClick={handleSubmitButtonClick}
           >
             {isSignInForm ? "Sign In" : "Sign Up"}
           </button>
