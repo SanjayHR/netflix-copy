@@ -7,6 +7,19 @@
     @tailwind base;
     @tailwind components;
     @tailwind utilities;
+
+# Netflix Copy
+    => Create React App
+    => Configured TailwindCSS
+    => Header
+    => Routing of app
+    => Login Screen
+    => SignUp Form
+    => Form Validation
+    => useRef Hook
+    => Firebase Setup
+    => Deploying our app to production
+    => Create New User Account
     
 # features
     => Login/Sign Up

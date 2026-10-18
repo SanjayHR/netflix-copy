@@ -5,6 +5,11 @@
 /.pnp
 .pnp.js
 
+# locally installed agent skills
+/.agents/skills/
+/.claude/skills/
+/skills-lock.json
+
 # testing
 /coverage
 

@@ -1,0 +1,24 @@
+[debug] [2026-10-15T17:53:26.078Z] ----------------------------------------------------------------------
+[debug] [2026-10-15T17:53:26.098Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Bhavish SH\AppData\Roaming\npm\node_modules\.firebase-tools-VIaIln4F\lib\bin\firebase.js init
+[debug] [2026-10-15T17:53:26.099Z] CLI Version:   15.34.0
+[debug] [2026-10-15T17:53:26.099Z] Platform:      win32
+[debug] [2026-10-15T17:53:26.099Z] Node Version:  v24.11.1
+[debug] [2026-10-15T17:53:26.099Z] Detected Agent: unknown
+[debug] [2026-10-15T17:53:26.099Z] Time:          Thu Oct 15 2026 23:23:26 GMT+0530 (India Standard Time)
+[debug] [2026-10-15T17:53:26.099Z] ----------------------------------------------------------------------
+[debug] 
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  D:\Sanjay-Studies\Projects\netflix-copy
+
+Before we get started, keep in mind:
+
+  * You are initializing within an existing Firebase project directory
+
