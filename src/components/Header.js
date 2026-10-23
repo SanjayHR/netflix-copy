@@ -1,27 +1,45 @@
-import React from "react";
-import { signOut } from "firebase/auth";
-import { auth } from "../utils/firebase";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { signOut, onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { auth } from "../utils/firebase";
+import { LOGO } from "../constants/constants";
+import { addUser, removeUser } from "../utils/userSlice";
 
 const Header = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const user = useSelector((store) => store.user);
+
   const handleSignOut = () => {
     signOut(auth)
-      .then(() => {
-        navigate("/"); // Redirect to the login page after signing out
-        console.log("User signed out successfully.");
-      })
+      .then(() => {})
       .catch((error) => {
         navigate("/error"); // Redirect to the login page even if there's an error
         console.error("Error signing out:", error);
       });
   };
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in
+        const { uid, email, displayName } = user;
+        dispatch(
+          addUser({ uuid: uid, email: email, displayName: displayName }),
+        );
+        navigate("/browse");
+      } else {
+        // User is signed out
+        dispatch(removeUser());
+        navigate("/");
+      }
+    });
+  }, []);
   return (
     <div className="flex items-center justify-between p-4 bg-black/70">
       <img
-        src="https://occ.a.nflxso.net/dnmt/api/v6/iL4oJVDYZ8KLSrJ6eG2OwtghbfQ/AAAAAVIENVPMEM3Kn4hVzJseX4N8xPjtBDIpwuFDucWksdxQZ8Ss6Xf8U_vt7ThYYfRmzq0x1CS3nOwTGyVrgADvwfB_tPiK_liS2RjvI40RJSzbKRk-o8b3nCxHfCCnBsyB2XBB9_vRoSmN.svg"
+        src={LOGO}
         alt="Netflix Logo"
         className="w-32 h-12 bg-gradient-to-bl"
       />
